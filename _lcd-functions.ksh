@@ -124,18 +124,17 @@ ZFS_POOLS=0
 MDADM_POOLS=0
 R_DEVICES=""
 
-if (( $(whereis zfs | wc -w) != 1 ))
+if which zfs > /dev/null
 then
 	ZFS_POOLS=$(zpool list -H | wc -l)
 	echo "Found $ZFS_POOLS zfs pools !"
 fi
 
-if (( $(whereis mdadm | wc -w) != 1 ))
+if which mdadm > /dev/null
 then
 	MDADM_POOLS=$(ls -1 /dev/md*  | egrep /dev/md'[0-9]+' | wc -l)
 	echo "Found $MDADM_POOLS mdadm pools !"
 fi
-
 #-------------------------------------------------------------------------------
 # 4.1 Pool info zfs
 # TODO add support for multiple pools ?
