@@ -192,6 +192,29 @@ then
 fi
 
 #-------------------------------------------------------------------------------
+# 4.2 Pool info LVM2
+# TODO add support for multiple pools ?
+#-------------------------------------------------------------------------------
+#
+# get current index count as start value
+if [ "1" -eq $(( $LVM_POOLS > 0 )) ]
+then
+	INDEX=${#ROW[@]}
+	# query
+	PREV_TOTAL=0
+	PREV_IDLE=0
+	FREE=$(zpool list -H | cut -f 4)
+	HEALTH=$(lvs -o lv_attr --noheadings | head -n1 | grep -q '......')
+	CAP=$(zpool list -H | cut -f 5)
+	# result
+	ROW[${INDEX}]="$(zpool list -H | cut -f 1) $(zpool list -H | cut -f 2)"
+	(( INDEX ++ ))
+	ROW[${INDEX}]="$FREE $CAP-$HEALTH"
+	(( INDEX ++ ))
+	R_DEVICES=$(zpool status | grep sd | awk '{print "/dev/"$1}')
+fi
+
+#-------------------------------------------------------------------------------
 # 5. HDD temps
 # get hdd temperature (re-use device information from zfs)
 #-------------------------------------------------------------------------------
