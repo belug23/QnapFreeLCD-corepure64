@@ -122,6 +122,7 @@ done
 #
 ZFS_POOLS=0
 MDADM_POOLS=0
+LVM_POOLS=0
 R_DEVICES=""
 
 if which zfs > /dev/null
@@ -135,13 +136,20 @@ then
 	MDADM_POOLS=$(ls -1 /dev/md*  | egrep /dev/md'[0-9]+' | wc -l)
 	echo "Found $MDADM_POOLS mdadm pools !"
 fi
+
+if which lvs > /dev/null
+then
+    LVM_POOLS=$(lvs --noheadings | wc -l)
+    echo "found $LVM_POOLS lvm pools !"
+fi
+
 #-------------------------------------------------------------------------------
 # 4.1 Pool info zfs
 # TODO add support for multiple pools ?
 #-------------------------------------------------------------------------------
 #
 # get current index count as start value
-if (( $ZFS_POOLS > 0 ))
+if [ "1" -eq $(( $ZFS_POOLS > 0 )) ]
 then
 	INDEX=${#ROW[@]}
 	# query
@@ -165,7 +173,7 @@ fi
 #-------------------------------------------------------------------------------
 #
 # get current index count as start value
-if (( $MDADM_POOLS > 0 ))
+if [ "1" -eq $(( $MDADM_POOLS > 0 )) ]
 then
 	for ARRAY in $(ls -1 /dev/md*  | egrep /dev/md'[0-9]+')
 	do
@@ -182,7 +190,6 @@ then
 		(( INDEX ++ ))
 	done
 fi
-
 
 #-------------------------------------------------------------------------------
 # 5. HDD temps
